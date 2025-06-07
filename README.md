@@ -16,14 +16,16 @@ Sebuah tool command-line berbasis Python yang dirancang untuk melakukan serangan
 
 ## 📸 Tangkapan Layar
 ![Tangkapan Layar](assets/awal.png)
+
 ![Tangkapan Layar](assets/result.png)
+
 ![Tangkapan Layar](assets/noresult.png)
 
 ## ⚙️ Instalasi
 
 1.  **Clone repository ini:**
     ```bash
-    git clone [https://github.com/HanzYiz/bcrypt_cracker](https://github.com/HanzYiz/bcrypt_cracker)
+    git clone https://github.com/HanzYiz/bcrypt_cracker
     cd bcrypt_cracker
     ```
 
