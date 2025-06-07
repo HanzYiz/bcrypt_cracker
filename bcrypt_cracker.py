@@ -6,9 +6,9 @@ import multiprocessing
 import sys
 import os
 from tqdm import tqdm
+import signal
 
 def check_password(args):
-    """Worker function to check password against hash"""
     target_hash, password = args
     try:
         if bcrypt.checkpw(password.encode('utf-8'), target_hash):
@@ -17,8 +17,10 @@ def check_password(args):
         pass
     return None
 
+def init_worker():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
 def crack_bcrypt(target_hash, wordlist_path, max_processes=None):
-    """Main cracking function with multiprocessing"""
     if not os.path.exists(wordlist_path):
         print(f"\n[!] Error: Wordlist file '{wordlist_path}' not found!")
         sys.exit(1)
@@ -37,17 +39,24 @@ def crack_bcrypt(target_hash, wordlist_path, max_processes=None):
     print(f"[•] Loaded {total_passwords:,} passwords from {wordlist_path}")
     print(f"[•] Using {max_processes or multiprocessing.cpu_count()} processes\n")
 
-    with multiprocessing.Pool(processes=max_processes) as pool:
-        args = ((target_hash, pwd) for pwd in passwords)
+    with multiprocessing.Pool(processes=max_processes, initializer=init_worker) as pool:
+        try:
+            args = ((target_hash, pwd) for pwd in passwords)
+            
+            for result in tqdm(pool.imap_unordered(check_password, args),
+                               total=total_passwords,
+                               desc="Cracking progress",
+                               unit="passwords"):
+                if result is not None:
+                    pool.terminate()
+                    time_elapsed = datetime.now() - start_time
+                    return (True, result, total_passwords, time_elapsed)
         
-        for result in tqdm(pool.imap_unordered(check_password, args),
-                         total=total_passwords,
-                         desc="Cracking progress",
-                         unit="passwords"):
-            if result is not None:
-                pool.terminate()
-                time_elapsed = datetime.now() - start_time
-                return (True, result, total_passwords, time_elapsed)
+        except KeyboardInterrupt:
+            pool.terminate()
+            pool.join()
+            print("\n[!] Crack interrupted by user. Shutting down gracefully.")
+            sys.exit(0)
     
     time_elapsed = datetime.now() - start_time
     return (False, None, total_passwords, time_elapsed)
@@ -93,7 +102,7 @@ def main():
     try:
         target_hash = args.hash.encode() if isinstance(args.hash, str) else args.hash
         
-        if not target_hash.startswith(b'$2a$') and not target_hash.startswith(b'$2b$') and not target_hash.startswith(b'$2y$'):
+        if not target_hash.startswith((b'$2a$', b'$2b$', b'$2y$')):
             print("\n[!] Error: Invalid bcrypt hash format (should start with $2a$, $2b$ or $2y$)")
             sys.exit(1)
         
@@ -111,9 +120,8 @@ def main():
         print(f"Speed: {attempts/max(1, time_elapsed.total_seconds()):.1f} attempts/sec")
         print("="*50)
         
-    except KeyboardInterrupt:
-        print("\n[!] Crack interrupted by user")
-        sys.exit(0)
+    except SystemExit:
+        pass
     except Exception as e:
         print(f"\n[!] Error: {str(e)}")
         sys.exit(1)
