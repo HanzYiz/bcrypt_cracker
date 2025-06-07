@@ -1,11 +1,9 @@
-# Bcrypt Cracker Kinerja Tinggi (Multiprocessing)
+# Bcrypt Cracker
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 Sebuah tool command-line berbasis Python yang dirancang untuk melakukan serangan *brute-force* terhadap hash bcrypt secara efisien. Dibuat dengan modul `multiprocessing` untuk memanfaatkan semua core CPU yang tersedia, sehingga memberikan kecepatan cracking yang jauh lebih tinggi dibandingkan pendekatan single-thread atau multi-thread biasa.
-
-Proyek ini dibuat untuk tujuan edukasi, yaitu untuk mendemonstrasikan kekuatan (dan kelemahan) dari algoritma hashing modern dan pentingnya *cost factor* pada bcrypt.
 
 ## ✨ Fitur Utama
 
@@ -17,39 +15,19 @@ Proyek ini dibuat untuk tujuan edukasi, yaitu untuk mendemonstrasikan kekuatan (
 -   **Validasi Input:** Secara otomatis memeriksa format hash bcrypt untuk memastikan input yang valid.
 
 ## 📸 Tangkapan Layar
-
-*(Sangat disarankan untuk menambahkan tangkapan layar dari tool Anda saat berjalan di sini)*
-![Tangkapan Layar](httpsd-Aset/bcrypt_cracker_mp_demo.png)
+![Tangkapan Layar](assets/awal.png)
+![Tangkapan Layar](assets/result.png)
+![Tangkapan Layar](assets/noresult.png)
 
 ## ⚙️ Instalasi
 
-Untuk menjalankan tool ini, Anda memerlukan Python 3.9 atau yang lebih baru.
-
 1.  **Clone repository ini:**
     ```bash
-    git clone [https://github.com/NAMA_USER_ANDA/NAMA_REPO_ANDA.git](https://github.com/NAMA_USER_ANDA/NAMA_REPO_ANDA.git)
-    cd NAMA_REPO_ANDA
+    git clone [https://github.com/HanzYiz/bcrypt_cracker](https://github.com/HanzYiz/bcrypt_cracker)
+    cd bcrypt_cracker
     ```
 
-2.  **Buat dan aktifkan virtual environment (sangat disarankan):**
-    ```bash
-    # Membuat environment
-    python -m venv venv
-
-    # Mengaktifkan di Windows
-    .\venv\Scripts\activate
-
-    # Mengaktifkan di Linux/macOS
-    source venv/bin/activate
-    ```
-
-3.  **Buat file `requirements.txt`:**
-    Buat sebuah file baru bernama `requirements.txt` di direktori proyek dan isikan dengan:
-    ```
-    bcrypt
-    ```
-
-4.  **Install dependensi yang diperlukan:**
+2.  **Install dependensi yang diperlukan:**
     ```bash
     pip install -r requirements.txt
     ```
@@ -59,4 +37,5 @@ Untuk menjalankan tool ini, Anda memerlukan Python 3.9 atau yang lebih baru.
 Jalankan skrip dari terminal dengan format perintah berikut:
 
 ```bash
-python bcrypt_cracker_mp.py <HASH> <PATH_WORDLIST> [OPTIONS]
+python bcrypt_cracker.py <HASH> <PATH_WORDLIST> [OPTIONS]
+python bcrypt_cracker.py '$2y$10$Ha3uj1RJRsxsCe3830xRm.mAELe8tx40ASGpzQsePFoiGC51nXHjO' rockyou.txt -p 100
